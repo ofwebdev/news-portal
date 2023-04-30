@@ -1,5 +1,6 @@
 import React from "react";
 import { useLoaderData, useParams } from "react-router-dom";
+import NewsCard from "../newsCart/NewsCard";
 
 function Category() {
   const { id } = useParams();
@@ -7,7 +8,9 @@ function Category() {
   console.log(id);
   return (
     <div>
-      This is a Category : {id} {categoryNews.length}
+      {categoryNews.map((news) => (
+        <NewsCard key={news._id} news={news}></NewsCard>
+      ))}
     </div>
   );
 }
