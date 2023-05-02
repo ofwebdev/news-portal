@@ -7,6 +7,7 @@ import Home from "../pages/home/home/Home";
 import Category from "../pages/home/category/Category";
 import NewsLayout from "../layouts/NewsLayout";
 import News from "../pages/News/News/News";
+import PrivateRoute from "./PrivateRoute";
 
 const router = createBrowserRouter([
   {
@@ -15,7 +16,8 @@ const router = createBrowserRouter([
     children: [
       {
         path: "/",
-        element: <Home />,
+        element: <Category />,
+        loader: ({ params }) => fetch(`http://localhost:3000/news/`),
       },
       {
         path: "/category/:id",
@@ -23,19 +25,20 @@ const router = createBrowserRouter([
         loader: ({ params }) =>
           fetch(`http://localhost:3000/category/${params.id}`),
       },
-      // {
-      //   path: "/login",
-      //   element: <Login />,
-      // },
-      // {
-      //   path: "/forgot",
-      //   element: <ForgotPassword />,
-      // },
-      // {
-      //   path: "/register",
-      //   element: <Register />,
-      // },
     ],
+  },
+
+  {
+    path: "/login",
+    element: <Login />,
+  },
+  {
+    path: "/forgot",
+    element: <ForgotPassword />,
+  },
+  {
+    path: "/register",
+    element: <Register />,
   },
 
   {
@@ -44,7 +47,11 @@ const router = createBrowserRouter([
     children: [
       {
         path: ":id",
-        element: <News />,
+        element: (
+          <PrivateRoute>
+            <News />
+          </PrivateRoute>
+        ),
         loader: ({ params }) =>
           fetch(`http://localhost:3000/news/${params.id}`),
       },

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext, useState } from "react";
 import logo from "../../assets/logo.png";
 import { Button, Container } from "react-bootstrap";
 import Form from "react-bootstrap/Form";
@@ -7,8 +7,15 @@ import Navbar from "react-bootstrap/Navbar";
 import NavDropdown from "react-bootstrap/NavDropdown";
 import Offcanvas from "react-bootstrap/Offcanvas";
 import Marquee from "react-fast-marquee";
+import { Link, useNavigate } from "react-router-dom";
+import { AuthContext } from "../../provider/AuthProvider";
 
 function Header() {
+  const [success, setSuccess] = useState(false);
+
+  const { user, logOut } = useContext(AuthContext);
+  // const navigation = useNavigate();
+
   const months = [
     "January",
     "February",
@@ -39,9 +46,17 @@ function Header() {
   const dayOfMonth = today.getDate();
   const year = today.getFullYear();
 
-  const formattedDate = `${dayOfWeek}, ${month} ${dayOfMonth}, ${year}`;
-  console.log(formattedDate);
-  // output: "Tuesday, April 25, 2023" (will vary depending on the current date)
+  const logoutHandler = () => {
+    logOut()
+      .then(() => {
+        setSuccess(true);
+        setTimeout(() => {
+          setSuccess(false);
+          // navigation("/login");
+        }, 1000);
+      })
+      .catch((error) => console.log(error));
+  };
 
   return (
     <Container>
@@ -82,7 +97,9 @@ function Header() {
                 </Offcanvas.Header>
                 <Offcanvas.Body>
                   <Nav className="justify-content-end flex-grow-1 pe-3">
-                    <Nav.Link href="#action1">Home</Nav.Link>
+                    <Nav.Link href="#action1">
+                      <Link to={"/"}>Home</Link>
+                    </Nav.Link>
                     <Nav.Link href="#action2">About</Nav.Link>
                     <NavDropdown
                       title="Career"
@@ -99,7 +116,13 @@ function Header() {
                         Something else here
                       </NavDropdown.Item>
                     </NavDropdown>
-                    <Nav.Link href="#action6">Login</Nav.Link>
+                    <Nav.Link>
+                      {user ? (
+                        <Link onClick={logoutHandler}>Logout</Link>
+                      ) : (
+                        <Link to="/login">Login</Link>
+                      )}
+                    </Nav.Link>
                   </Nav>
                   <Form className="d-flex">
                     <Form.Control
@@ -115,6 +138,7 @@ function Header() {
             </Container>
           </Navbar>
         ))}
+        {success && <p>Logout successful!</p>}
       </>
     </Container>
   );
